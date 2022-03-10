@@ -8,13 +8,13 @@ module.exports = class Sample4Service extends cds.ApplicationService {
     this.on("getName", async (req) => {
       const { PeopleID } = req.data;
       const person = await this.run(SELECT.one("People", PeopleID))
-      return person?.Name;
+      return person.Name;
     })
 
     this.on("getName", "People", async (req) => {
       const [PeopleID] = req.params;
       const person = await this.run(SELECT.one("People", PeopleID))
-      return person?.Name;
+      return person.Name;
     })
 
     await super.init()
