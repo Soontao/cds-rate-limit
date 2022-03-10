@@ -8,7 +8,7 @@
 
 ```js
 const cds = require('@sap/cds')
-const { applyRateLimit } = require("../../../src")
+const { applyRateLimit } = require("cds-rate-limit")
 
 applyRateLimit(cds)
 
@@ -32,9 +32,9 @@ service Sample3Service {
 }
 ```
 
-## Options Hierarchy
+## RateLimiter Hierarchy
 
-> the `RateLimiter` configuration will use configuration in this order 
+> the `RateLimiter` configuration will apply restriction by order, if you do not annotate `@cds.rate.limit` on entity/action/function level, it will share the quota of the global `RateLimiter`
 
 1. Event/Action/Function
 2. Entity
@@ -58,5 +58,6 @@ service Sample3Service {
   - [ ] Inner event ignore
 - [ ] Custom key
 - [ ] Redis store
+- [ ] Dynamic quota for tenants
 
 ## [LICENSE](./LICENSE)
