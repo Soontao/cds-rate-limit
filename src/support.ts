@@ -21,15 +21,15 @@ export const DEFAULT_OPTIONS: RateLimitOptions = {
 const createKeyExtractor = (keyParts: Array<KeyPart>) => (evt: any) => {
   const parts = [];
   if (keyParts.includes("tenant")) {
-    parts.push(evt?.tenant ?? "unknown");
+    parts.push(evt?.tenant ?? "unknown_tenant");
   }
   if (keyParts.includes("user_id")) {
-    parts.push(evt?.user?.id ?? "unknown");
+    parts.push(evt?.user?.id ?? "unknown_user");
   }
   if (keyParts.includes("remote_ip")) {
     const req = evt?._?.req;
     if (req !== undefined) {
-      parts.push(req?.ip ?? req.socket.remoteAddress ?? "unknown");
+      parts.push(req?.ip ?? req.socket.remoteAddress ?? "unknown_ip");
     }
   }
   return parts.join("/");
