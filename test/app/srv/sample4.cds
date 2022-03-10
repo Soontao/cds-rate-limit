@@ -6,6 +6,7 @@ using {
 } from '@sap/cds/common';
 
 
+@impl : './sample4.js'
 @path : '/sample4'
 service Sample4Service {
 

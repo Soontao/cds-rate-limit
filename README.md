@@ -6,3 +6,6 @@
 - [ ] Event Rate Limit
   - [ ] Inner event ignore
 - [ ] Custom key
+- [ ] Redis store
+
+## [LICENSE](./LICENSE)

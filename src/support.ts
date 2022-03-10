@@ -62,7 +62,7 @@ const parseOptions = (service: any, evt: any, globalOptions: RateLimitOptions): 
     // entity related events
     const entityDef = cds.model.definitions[evt.entity];
     const entityLevelOptions = groupByKeyPrefix(entityDef, ANNOTATE_CDS_RATE_LIMIT);
-    if (!isEmpty(serviceLevelOptions)) {
+    if (!isEmpty(entityLevelOptions)) {
       if ("duration" in entityLevelOptions || "points" in entityLevelOptions) {
         // use entity key-prefix, which will be used to indicate the Rate Limiter
         localOptions.keyPrefix = `local-${service.name}/${evt?.entity}`;

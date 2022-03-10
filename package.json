@@ -12,7 +12,7 @@
     "npm": ">=6"
   },
   "scripts": {
-    "test": "jest --detectOpenHandles --passWithNoTests",
+    "test": "jest",
     "prebuild": "rimraf lib",
     "build": "tsc",
     "postbuild": "tsc --noEmit --p tsconfig.lib.json",

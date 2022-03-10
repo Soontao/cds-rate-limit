@@ -5,7 +5,7 @@ import { RATE_LIMIT_HEADERS } from "../src/constants";
 describe("Support Test Suite", () => {
 
   // @ts-ignore
-  const { axios } = cds.test(".").in(__dirname, "./app")
+  const axios = cds.test(".").in(__dirname, "./app")
 
   it('should support connect to service', async () => {
     const { data } = await axios.get("/sample/$metadata")
@@ -25,6 +25,34 @@ describe("Support Test Suite", () => {
     const responses = await axios.get("/sample2/People")
     expect(responses.headers[RATE_LIMIT_HEADERS["Retry-After"].toLowerCase()]).toBe("5")
     expect(responses.headers[RATE_LIMIT_HEADERS["X-RateLimit-Limit"].toLowerCase()]).toBe("20")
+  });
+
+  it('should support rate limit in entity level', async () => {
+    let responses = await axios.post("/sample3/People", { Name: "Theo Sun" })
+    expect(responses.status).toBe(201)
+    expect(responses.headers[RATE_LIMIT_HEADERS["Retry-After"].toLowerCase()]).toBe("126")
+    expect(responses.headers[RATE_LIMIT_HEADERS["X-RateLimit-Limit"].toLowerCase()]).toBe("25")
+    expect(responses.headers[RATE_LIMIT_HEADERS["X-RateLimit-Remaining"].toLowerCase()]).toBe("24")
+
+    responses = await axios.get("/sample3/People")
+
+    expect(responses.data.value).toHaveLength(1)
+    expect(responses.status).toBe(200)
+    expect(responses.headers[RATE_LIMIT_HEADERS["X-RateLimit-Limit"].toLowerCase()]).toBe("25")
+    expect(responses.headers[RATE_LIMIT_HEADERS["X-RateLimit-Remaining"].toLowerCase()]).toBe("23") // will share the points
+
+  });
+
+  it('should support rate limit in action/function level', async () => {
+    let responses = await axios.post("/sample4/People", { Name: "Theo Sun" }, { validateStatus: () => true })
+    expect(responses.status).toBe(201)
+
+    responses = await axios.get(`/sample4/People(${responses.data.ID})`, { validateStatus: () => true })
+    expect(responses.status).toBe(200)
+
+    responses = await axios.get(`/sample4/People(${responses.data.ID})/getName()`, { validateStatus: () => true })
+    expect(responses.status).toBe(200)
+    expect(responses.data.value).toBe("Theo Sun")
   });
 
 
