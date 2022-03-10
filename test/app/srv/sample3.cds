@@ -7,7 +7,7 @@ using {
 
 
 @path : '/sample3'
-service Sample2Service {
+service Sample3Service {
 
   // entity level
   @cds.rate.limit : {
