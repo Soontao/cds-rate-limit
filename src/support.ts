@@ -132,47 +132,51 @@ export const applyRateLimit = (cds: any, globalOptions: RateLimitOptions = {}) =
 
       const logger = cds.log(service?.name);
 
-      service.before("*", async (evt: any) => {
+      service.prepend("*", (srv: any) => {
 
-        const eventKey = formatEventKey(service, evt);
+        srv.before("*", async (evt: any) => {
 
-        // only affect HTTP requests
-        if (evt instanceof cds.Request) {
-
-          // if this event has been measured
-          if (evt[FLAG_RATE_LIMIT_PERFORMED] === true) {
-            logger.debug(
-              "event",
-              eventKey,
-              "is triggered by internal communication (has been measured by first event), ignored"
-            );
-            return;
+          const eventKey = formatEventKey(srv, evt);
+  
+          // only affect HTTP requests
+          if (evt instanceof cds.Request) {
+  
+            // if this event has been measured
+            if (evt[FLAG_RATE_LIMIT_PERFORMED] === true) {
+              logger.debug(
+                "event",
+                eventKey,
+                "is triggered by internal communication (has been measured by first event), ignored"
+              );
+              return;
+            }
+  
+            evt[FLAG_RATE_LIMIT_PERFORMED] = true;
+  
+            const options = parseOptions(srv, evt, globalOptions);
+            const rateLimiter = limiters.getOrCreate(options.keyPrefix, () => provisionRateLimiter(options));
+            const keyExtractor = createKeyExtractor(options.keyParts as []);
+            const key = keyExtractor(evt);
+  
+            try {
+              const response = await rateLimiter.consume(key);
+              logger.debug("rate limit consume successful:", key, response);
+              attachHeaders(evt, options.points as number, response);
+              return;
+            } catch (response) {
+              logger.error("rate limit consume failed:", key, response);
+              attachHeaders(evt, options.points as number, response);
+              return evt.reject(
+                429,
+                `Rate limit exceed, please retry after ${Math.floor(response.msBeforeNext / 1000)} seconds`
+              );
+            }
+          } else {
+            logger.debug("event", eventKey, "is not from http request, ignored");
           }
-
-          evt[FLAG_RATE_LIMIT_PERFORMED] = true;
-
-          const options = parseOptions(service, evt, globalOptions);
-          const rateLimiter = limiters.getOrCreate(options.keyPrefix, () => provisionRateLimiter(options));
-          const keyExtractor = createKeyExtractor(options.keyParts as []);
-          const key = keyExtractor(evt);
-
-          try {
-            const response = await rateLimiter.consume(key);
-            logger.debug("rate limit consume successful:", key, response);
-            attachHeaders(evt, options.points as number, response);
-            return;
-          } catch (response) {
-            logger.error("rate limit consume failed:", key, response);
-            attachHeaders(evt, options.points as number, response);
-            return evt.reject(
-              429,
-              `Rate limit exceed, please retry after ${Math.floor(response.msBeforeNext / 1000)} seconds`
-            );
-          }
-        } else {
-          logger.debug("event", eventKey, "is not from http request, ignored");
-        }
+        });
       });
+
 
     }
   });
