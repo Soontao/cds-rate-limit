@@ -4,6 +4,17 @@
 
 [![node-test](https://github.com/Soontao/cds-rate-limit/actions/workflows/nodejs.yml/badge.svg)](https://github.com/Soontao/cds-rate-limit/actions/workflows/nodejs.yml)
 
+## Get Started
+
+```js
+const cds = require('@sap/cds')
+const { applyRateLimit } = require("../../../src")
+
+applyRateLimit(cds)
+
+module.exports = cds.server
+```
+
 ## Features
 
 - [x] Global Rate Limit
