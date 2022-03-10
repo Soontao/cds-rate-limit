@@ -44,5 +44,11 @@
     "@newdash/newdash": "^5.21.1",
     "rate-limiter-flexible": "^2.3.6"
   },
+  "keywords": [
+    "CAP",
+    "cds",
+    "rate-limit",
+    "DDoS"
+  ],
   "license": "Apache-2.0"
 }
