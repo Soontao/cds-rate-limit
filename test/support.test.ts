@@ -43,17 +43,5 @@ describe("Support Test Suite", () => {
 
   });
 
-  it('should support rate limit in action/function level', async () => {
-    let responses = await axios.post("/sample4/People", { Name: "Theo Sun" }, { validateStatus: () => true })
-    expect(responses.status).toBe(201)
-
-    responses = await axios.get(`/sample4/People(${responses.data.ID})`, { validateStatus: () => true })
-    expect(responses.status).toBe(200)
-
-    responses = await axios.get(`/sample4/People(${responses.data.ID})/getName()`, { validateStatus: () => true })
-    expect(responses.status).toBe(200)
-    expect(responses.data.value).toBe("Theo Sun")
-  });
-
 
 });

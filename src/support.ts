@@ -57,6 +57,8 @@ const parseOptions = (service: any, evt: any, globalOptions: RateLimitOptions): 
     Object.assign(localOptions, serviceLevelOptions);
   }
 
+  let eventDef = undefined;
+
   // entity relevant
   if (evt?.entity !== undefined) {
     // entity related events
@@ -69,8 +71,28 @@ const parseOptions = (service: any, evt: any, globalOptions: RateLimitOptions): 
       }
       Object.assign(localOptions, entityLevelOptions);
     };
+
+    // bound action/function
+    if (entityDef.actions !== undefined && evt.event in entityDef.actions) {
+      eventDef = entityDef.actions[evt.event];
+    }
   }
-  // TODO: event def
+
+  // unbound action/function
+  if (evt.entity === undefined && evt.event in service.operations()) {
+    eventDef = service.operations()[evt.event];
+  }
+
+  if (eventDef !== undefined) {
+    const eventLevelOptions = groupByKeyPrefix(eventDef, ANNOTATE_CDS_RATE_LIMIT);
+    if (!isEmpty(eventLevelOptions)) {
+      if ("duration" in eventLevelOptions || "points" in eventLevelOptions) {
+        // use entity key-prefix, which will be used to indicate the Rate Limiter
+        localOptions.keyPrefix = `local-${service.name}/${evt?.entity}/${evt.event}`;
+      }
+      Object.assign(localOptions, eventLevelOptions);
+    };
+  }
 
   return Object.assign({}, globalOptions, localOptions);
 };
@@ -137,10 +159,10 @@ export const applyRateLimit = (cds: any, globalOptions: RateLimitOptions = {}) =
         srv.before("*", async (evt: any) => {
 
           const eventKey = formatEventKey(srv, evt);
-  
+
           // only affect HTTP requests
           if (evt instanceof cds.Request) {
-  
+
             // if this event has been measured
             if (evt[FLAG_RATE_LIMIT_PERFORMED] === true) {
               logger.debug(
@@ -150,14 +172,14 @@ export const applyRateLimit = (cds: any, globalOptions: RateLimitOptions = {}) =
               );
               return;
             }
-  
+
             evt[FLAG_RATE_LIMIT_PERFORMED] = true;
-  
+
             const options = parseOptions(srv, evt, globalOptions);
             const rateLimiter = limiters.getOrCreate(options.keyPrefix, () => provisionRateLimiter(options));
             const keyExtractor = createKeyExtractor(options.keyParts as []);
             const key = keyExtractor(evt);
-  
+
             try {
               const response = await rateLimiter.consume(key);
               logger.debug("rate limit consume successful:", key, response);
