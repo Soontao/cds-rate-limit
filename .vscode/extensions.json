@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "EditorConfig.EditorConfig",
+    "dbaeumer.vscode-eslint",
+    "andys8.jest-snippets",
+    "streetsidesoftware.code-spell-checker"
+  ]
+}

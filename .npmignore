@@ -1,0 +1,14 @@
+.vscode
+.github
+coverage
+test
+*.tgz
+.eslint*
+commitlint.config.js
+jest.config.js
+.env
+.editorconfig
+.prettierignore
+.prettierrc.json
+.whitesource
+src
