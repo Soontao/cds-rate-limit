@@ -11,7 +11,7 @@ using {
   points   : 5,
   duration : 1,
 }
-service Sample2Service {
+service SampleService {
 
   entity People : cuid, managed {
     Name : String(255);
