@@ -35,14 +35,28 @@ const createKeyExtractor = (keyParts: Array<KeyPart>) => (evt: any) => {
   return parts.join("/");
 };
 
+/**
+ * parse options for events
+ * 
+ * @param evt 
+ * @param globalOptions 
+ * @returns 
+ */
 const parseOptions = (evt: any, globalOptions: RateLimitOptions): RateLimitOptions => {
   // TODO: if not have configured, return default
   return Object.assign({}, globalOptions);
 };
 
+/**
+ * get the rate limiter key from event 
+ * 
+ * @param service 
+ * @param evt 
+ * @returns 
+ */
 const extractRateLimiterKey = (service: any, evt: any): string => {
   const rateLimiterKey = `${service.name}/${evt?.entity ?? "unbound"}/${evt}`;
-  // TODO: if not have configured, return default
+  // TODO: if not have configured, return GLOBAL
   return rateLimiterKey;
 };
 
@@ -72,7 +86,13 @@ const attachHeaders = (evt: any, total: number, rateLimitRes: RateLimiterRes) =>
   }
 };
 
-export const support = (cds: any, globalOptions: RateLimitOptions = {}) => {
+/**
+ * apply rate limitation for cds
+ * 
+ * @param cds 
+ * @param globalOptions 
+ */
+export const applyRateLimit = (cds: any, globalOptions: RateLimitOptions = {}) => {
   /**
    * key: service/event id
    */

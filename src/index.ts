@@ -1,2 +1,2 @@
 
-export { support } from "./support";
+export { applyRateLimit } from "./support";

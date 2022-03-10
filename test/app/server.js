@@ -1,4 +1,4 @@
 const cds = require('@sap/cds')
-const { support } = require("../../src")
+const { applyRateLimit } = require("../../src")
 
-support(cds)
+applyRateLimit(cds)
