@@ -12,13 +12,19 @@ describe("Support Test Suite", () => {
     expect(data).toMatch(/People/)
   });
 
-  it('should support X-RateLimit headers', async () => {
+  it('should support RateLimit headers', async () => {
     const responses = await axios.get("/sample/People")
     expect(responses.status).toBe(200)
     expect(responses.headers[RATE_LIMIT_HEADERS["Retry-After"].toLowerCase()]).toBe("60")
     expect(responses.headers[RATE_LIMIT_HEADERS["X-RateLimit-Limit"].toLowerCase()]).toBe("12000")
     expect(responses.headers[RATE_LIMIT_HEADERS["X-RateLimit-Remaining"].toLowerCase()]).toBe("11999")
     expect(responses.headers[RATE_LIMIT_HEADERS["X-RateLimit-Reset"].toLowerCase()]).not.toBeUndefined()
+  });
+
+  it('should support rate limit in service level', async () => {
+    const responses = await axios.get("/sample2/People")
+    expect(responses.headers[RATE_LIMIT_HEADERS["Retry-After"].toLowerCase()]).toBe("5")
+    expect(responses.headers[RATE_LIMIT_HEADERS["X-RateLimit-Limit"].toLowerCase()]).toBe("20")
   });
 
 

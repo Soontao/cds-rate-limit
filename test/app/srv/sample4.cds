@@ -16,7 +16,7 @@ service Sample4Service {
   } actions {
     // action level
     @cds.rate.limit : {
-      points   : 20,
+      points   : 30,
       duration : 5,
     }
     function getName() returns String;
@@ -25,7 +25,7 @@ service Sample4Service {
 
   // action level
   @cds.rate.limit : {
-    points   : 20,
+    points   : 31,
     duration : 5,
   }
   function getName(PeopleID : UUID) returns String;

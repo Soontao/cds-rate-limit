@@ -1,7 +1,8 @@
 import { LRUCacheProvider } from "@newdash/newdash/cacheProvider";
+import { isEmpty } from "@newdash/newdash/isEmpty";
 import { IRateLimiterOptions, RateLimiterAbstract, RateLimiterMemory, RateLimiterRes } from "rate-limiter-flexible";
-import { FLAG_RATE_LIMIT_PERFORMED, GLOBAL_RATE_LIMITER_PREFIX, RATE_LIMIT_HEADERS } from "./constants";
-
+import { ANNOTATE_CDS_RATE_LIMIT, FLAG_RATE_LIMIT_PERFORMED, GLOBAL_RATE_LIMITER_PREFIX, RATE_LIMIT_HEADERS } from "./constants";
+import { groupByKeyPrefix } from "./utils";
 
 export type KeyPart = "user_id" | "remote_ip" | "tenant";
 
@@ -42,9 +43,36 @@ const createKeyExtractor = (keyParts: Array<KeyPart>) => (evt: any) => {
  * @param globalOptions 
  * @returns 
  */
-const parseOptions = (evt: any, globalOptions: RateLimitOptions): RateLimitOptions => {
-  // TODO: if not have configured, return default
-  return Object.assign({}, globalOptions);
+const parseOptions = (service: any, evt: any, globalOptions: RateLimitOptions): RateLimitOptions => {
+  const cds = require("@sap/cds");
+  const localOptions: RateLimitOptions = {};
+
+  const serviceLevelOptions = groupByKeyPrefix(service.definition, ANNOTATE_CDS_RATE_LIMIT);
+
+  if (!isEmpty(serviceLevelOptions)) {
+    if ("duration" in serviceLevelOptions || "points" in serviceLevelOptions) {
+      // use service key-prefix, which will be used to indicate the Rate Limiter
+      localOptions.keyPrefix = `local-${service.name}`;
+    }
+    Object.assign(localOptions, serviceLevelOptions);
+  }
+
+  // entity relevant
+  if (evt?.entity !== undefined) {
+    // entity related events
+    const entityDef = cds.model.definitions[evt.entity];
+    const entityLevelOptions = groupByKeyPrefix(entityDef, ANNOTATE_CDS_RATE_LIMIT);
+    if (!isEmpty(serviceLevelOptions)) {
+      if ("duration" in entityLevelOptions || "points" in entityLevelOptions) {
+        // use entity key-prefix, which will be used to indicate the Rate Limiter
+        localOptions.keyPrefix = `local-${service.name}/${evt?.entity}`;
+      }
+      Object.assign(localOptions, entityLevelOptions);
+    };
+  }
+  // TODO: event def
+
+  return Object.assign({}, globalOptions, localOptions);
 };
 
 /**
@@ -54,10 +82,8 @@ const parseOptions = (evt: any, globalOptions: RateLimitOptions): RateLimitOptio
  * @param evt 
  * @returns 
  */
-const extractRateLimiterKey = (service: any, evt: any): string => {
-  const rateLimiterKey = `${service.name}/${evt?.entity ?? "unbound"}/${evt}`;
-  // TODO: if not have configured, return GLOBAL
-  return rateLimiterKey;
+const formatEventKey = (service: any, evt: any): string => {
+  return `${service.name}/${evt?.entity ?? "unbound"}/${evt}`;;
 };
 
 const provisionRateLimiter = (options: RateLimitOptions): RateLimiterAbstract => {
@@ -108,14 +134,16 @@ export const applyRateLimit = (cds: any, globalOptions: RateLimitOptions = {}) =
 
       service.before("*", async (evt: any) => {
 
-        const rateLimiterKey = extractRateLimiterKey(service, evt);
+        const eventKey = formatEventKey(service, evt);
+
         // only affect HTTP requests
         if (evt instanceof cds.Request) {
+
           // if this event has been measured
           if (evt[FLAG_RATE_LIMIT_PERFORMED] === true) {
             logger.debug(
               "event",
-              rateLimiterKey,
+              eventKey,
               "is triggered by internal communication (has been measured by first event), ignored"
             );
             return;
@@ -123,8 +151,8 @@ export const applyRateLimit = (cds: any, globalOptions: RateLimitOptions = {}) =
 
           evt[FLAG_RATE_LIMIT_PERFORMED] = true;
 
-          const options = parseOptions(evt, globalOptions);
-          const rateLimiter = limiters.getOrCreate(rateLimiterKey, () => provisionRateLimiter(options));
+          const options = parseOptions(service, evt, globalOptions);
+          const rateLimiter = limiters.getOrCreate(options.keyPrefix, () => provisionRateLimiter(options));
           const keyExtractor = createKeyExtractor(options.keyParts as []);
           const key = keyExtractor(evt);
 
@@ -142,7 +170,7 @@ export const applyRateLimit = (cds: any, globalOptions: RateLimitOptions = {}) =
             );
           }
         } else {
-          logger.debug("event", rateLimiterKey, "is not from http request, ignored");
+          logger.debug("event", eventKey, "is not from http request, ignored");
         }
       });
 

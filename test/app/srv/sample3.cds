@@ -11,7 +11,7 @@ service Sample2Service {
 
   // entity level
   @cds.rate.limit : {
-    points   : 20,
+    points   : 25,
     duration : 5,
   }
   entity People : cuid, managed {
