@@ -164,7 +164,7 @@ export const applyRateLimit = (cds: any, globalOptions: RateLimitOptions = {}) =
           if (evt instanceof cds.Request) {
 
             // if this event has been measured
-            if (evt[FLAG_RATE_LIMIT_PERFORMED] === true) {
+            if (cds.context[FLAG_RATE_LIMIT_PERFORMED] === true) {
               logger.debug(
                 "event",
                 eventKey,
@@ -173,7 +173,7 @@ export const applyRateLimit = (cds: any, globalOptions: RateLimitOptions = {}) =
               return;
             }
 
-            evt[FLAG_RATE_LIMIT_PERFORMED] = true;
+            cds.context[FLAG_RATE_LIMIT_PERFORMED] = true;
 
             const options = parseOptions(srv, evt, globalOptions);
             const rateLimiter = limiters.getOrCreate(options.keyPrefix, () => provisionRateLimiter(options));

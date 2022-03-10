@@ -6,8 +6,8 @@
 
 ## Features
 
-- [ ] Global Rate Limit
-- [ ] Event Rate Limit
+- [x] Global Rate Limit
+- [x] Event Rate Limit
   - [ ] Inner event ignore
 - [ ] Custom key
 - [ ] Redis store
