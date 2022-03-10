@@ -6,7 +6,7 @@ import { FLAG_RATE_LIMIT_PERFORMED, GLOBAL_RATE_LIMITER_PREFIX, RATE_LIMIT_HEADE
 export type KeyPart = "user_id" | "remote_ip" | "tenant";
 
 export interface RateLimitOptions extends IRateLimiterOptions {
-  impl?: "redis" | "memory";
+  impl?: "memory" | "redis";
   keyParts?: Array<KeyPart>;
 }
 
