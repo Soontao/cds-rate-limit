@@ -10,7 +10,7 @@
 const cds = require('@sap/cds')
 const { applyRateLimit } = require("../../../src")
 
-applyRateLimit(cds) // global limitation
+applyRateLimit(cds)
 
 module.exports = cds.server
 ```
@@ -19,7 +19,9 @@ module.exports = cds.server
 using {cuid, managed} from '@sap/cds/common';
 @path : '/sample3'
 service Sample3Service {
-  @cds.rate.limit : { // accepts 1000 requests in 120 seconds, other request will be rejected by 429 status
+  // accepts 1000 requests in 120 seconds
+  // other request will be rejected by HTTP 429 status
+  @cds.rate.limit : { 
     duration : 120,
     points   : 1000,
   }
@@ -27,6 +29,25 @@ service Sample3Service {
     Name : String(255);
     Age  : Integer;
   }
+}
+```
+
+## Options Hierarchy
+
+> the `RateLimiter` configuration will use configuration in this order 
+
+1. Event/Action/Function
+2. Entity
+3. Service
+4. Global
+
+## Default Global Options
+
+```js
+{
+  keyParts: ["tenant"],
+  duration: 60, // 60 seconds
+  points: 200 * 60, // 12000 requests per minutes per tenant
 }
 ```
 
