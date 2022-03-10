@@ -3,6 +3,8 @@
 > apply `rate limit` pattern to CAP nodejs application
 
 [![node-test](https://github.com/Soontao/cds-rate-limit/actions/workflows/nodejs.yml/badge.svg)](https://github.com/Soontao/cds-rate-limit/actions/workflows/nodejs.yml)
+[![codecov](https://codecov.io/gh/Soontao/cds-rate-limit/branch/main/graph/badge.svg?token=xzBkWloYNR)](https://codecov.io/gh/Soontao/cds-rate-limit)
+
 
 ## Get Started
 
