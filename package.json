@@ -1,7 +1,12 @@
 {
-  "name": "template",
+  "name": "cds-rate-limit",
   "version": "0.0.1",
   "main": "lib/index.js",
+  "description": "enabled rate limit for CAP nodejs runtime",
+  "author": {
+    "name": "Theo Sun",
+    "email": "theo.sun@outlook.com"
+  },
   "engines": {
     "node": ">=12",
     "npm": ">=6"
@@ -38,5 +43,6 @@
   "dependencies": {
     "@newdash/newdash": "^5.21.1",
     "rate-limiter-flexible": "^2.3.6"
-  }
+  },
+  "license": "Apache-2.0"
 }
