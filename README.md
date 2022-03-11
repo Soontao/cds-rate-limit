@@ -50,11 +50,11 @@ service Sample3Service {
 ## Options
 
 - `keyParts`: use to generated the key
-  - `remote_ip` - req._.req.ip
+  - `remote_ip` - req._.req.ip - please ref [express document](http://expressjs.com/en/guide/behind-proxies.html) to setup `trust proxy`
   - `user_id` - ctx.user.id
   - `tenant` - ctx.tenant
-- `points`: quota for each key
-- `duration`: quota for each key in duration
+- `points`: quota for each key (user, ip, tenant or combined)
+- `duration`: quota for each key in duration (reset duration for quota)
 
 ### Default Global Options
 
@@ -85,6 +85,7 @@ applyRateLimit(cds, {
 
 ```js
 const Redis = require("ioredis")
+// freedom to setup your redis client with host/port/db
 const storeClient = new Redis({ enableOfflineQueue: false });
 // configuration global default configuration with redis
 // each user in each tenant could use the API 300 times in 5 seconds duration
