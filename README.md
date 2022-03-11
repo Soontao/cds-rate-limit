@@ -109,6 +109,7 @@ applyRateLimit(cds, {
 
 ## ToDo
 
+- [ ] How to process anonymous requests
 - [ ] Documents for microservice
 - [ ] Performance
 
