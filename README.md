@@ -5,6 +5,9 @@
 [![node-test](https://github.com/Soontao/cds-rate-limit/actions/workflows/nodejs.yml/badge.svg)](https://github.com/Soontao/cds-rate-limit/actions/workflows/nodejs.yml)
 [![codecov](https://codecov.io/gh/Soontao/cds-rate-limit/branch/main/graph/badge.svg?token=xzBkWloYNR)](https://codecov.io/gh/Soontao/cds-rate-limit)
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Soontao_cds-rate-limit&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Soontao_cds-rate-limit)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Soontao_cds-rate-limit&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Soontao_cds-rate-limit)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=Soontao_cds-rate-limit&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=Soontao_cds-rate-limit)
 
 ## Get Started
 
@@ -46,6 +49,9 @@ service Sample3Service {
 ## Options
 
 - `keyParts`: use to generated the key
+  - remote_ip
+  - user_id
+  - tenant
 - `points`: quota for each key
 - `duration`: quota for each key in duration
 
@@ -61,22 +67,33 @@ service Sample3Service {
 }
 ```
 
-### Options - Memory
+### Example - Memory
+
+```js
+// configuration global default configuration
+// each user could call API 6000 times in 1 minute duration
+applyRateLimit(cds, { 
+  impl: "memory", 
+  duration: 60, 
+  points: 6000, 
+  keyParts: ['user_id'] 
+})
+```
+
+### Example - Redis
 
 ```js
 const Redis = require("ioredis")
 const storeClient = new Redis({ enableOfflineQueue: false });
-// configuration global default configuration
-// each user could call API 6000 times in 1 minute duration
-applyRateLimit(cds, { impl: "memory", storeClient, duration: 60, points: 6000, keyParts: ['user_id'] })
-```
-
-### Options - Redis
-
-```js
 // configuration global default configuration with redis
 // each user in each tenant could use the API 300 times in 5 seconds duration
-applyRateLimit(cds, { impl: "redis", duration: 5, points: 300, keyParts: ['tenant', 'user_id'] })
+applyRateLimit(cds, { 
+  impl: "redis", 
+  storeClient, 
+  duration: 5, 
+  points: 300, 
+  keyParts: ['tenant', 'user_id'] 
+})
 ```
 
 ## Features
