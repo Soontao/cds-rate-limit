@@ -124,7 +124,8 @@ const formatEventKey = (service: any, evt: any): string => {
 const provisionRateLimiter = (options: RateLimitOptions): RateLimiterAbstract => {
   switch (options.impl) {
     case "redis":
-      return new RateLimiterRedis(options as any);
+      // fallback to in memory rate limiter when redis is not available
+      return new RateLimiterRedis(Object.assign({}, options as any, { insuranceLimiter: new RateLimiterMemory(options) }));
     default:
       return new RateLimiterMemory(options);
   }
