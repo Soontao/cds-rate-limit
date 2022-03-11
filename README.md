@@ -12,14 +12,18 @@
 
 ## Get Started
 
+`server.js`
+
 ```js
 const cds = require('@sap/cds')
 const { applyRateLimit } = require("cds-rate-limit")
 
-applyRateLimit(cds)
+applyRateLimit(cds) // with default global options
 
 module.exports = cds.server
 ```
+
+`cds definition`
 
 ```groovy
 using {cuid, managed} from '@sap/cds/common';
