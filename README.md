@@ -43,14 +43,40 @@ service Sample3Service {
 3. Service
 4. Global
 
-## Default Global Options
+## Options
+
+- `keyParts`: use to generated the key
+- `points`: quota for each key
+- `duration`: quota for each key in duration
+
+### Default Global Options
+
+**if there is no annotation on CDS Service/Entity/Action/Function, it will use the global configuration**
 
 ```js
 {
-  keyParts: ["tenant"],
+  keyParts: ["tenant"], // generate key from tenant
   duration: 60, // 60 seconds
   points: 200 * 60, // 12000 requests per minutes per tenant
 }
+```
+
+### Options - Memory
+
+```js
+const Redis = require("ioredis")
+const storeClient = new Redis({ enableOfflineQueue: false });
+// configuration global default configuration
+// each user could call API 6000 times in 1 minute duration
+applyRateLimit(cds, { impl: "memory", storeClient, duration: 60, points: 6000, keyParts: ['user_id'] })
+```
+
+### Options - Redis
+
+```js
+// configuration global default configuration with redis
+// each user in each tenant could use the API 300 times in 5 seconds duration
+applyRateLimit(cds, { impl: "redis", duration: 5, points: 300, keyParts: ['tenant', 'user_id'] })
 ```
 
 ## Features
@@ -59,7 +85,7 @@ service Sample3Service {
 - [x] Event Rate Limit
   - [ ] Inner event ignore
 - [ ] Custom key
-- [ ] Redis store
+- [x] Redis store
 - [ ] Dynamic quota for tenants
 - [ ] Sampling store to reduce remote store network consumption
 
