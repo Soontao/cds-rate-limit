@@ -113,7 +113,7 @@ applyRateLimit(cds, {
 
 - [x] Global Rate Limit
 - [x] Event Rate Limit
-  - [ ] Inner event ignore
+  - [x] Inner event ignore
 - [ ] Custom key
 - [x] Redis store
 - [ ] Dynamic quota for tenants
