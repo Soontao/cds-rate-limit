@@ -1,27 +1,10 @@
 import { LRUCacheProvider } from "@newdash/newdash/cacheProvider";
 import { isEmpty } from "@newdash/newdash/isEmpty";
-import { IRateLimiterOptions, RateLimiterAbstract, RateLimiterMemory, RateLimiterRedis, RateLimiterRes } from "rate-limiter-flexible";
+import { RateLimiterAbstract, RateLimiterMemory, RateLimiterRedis, RateLimiterRes } from "rate-limiter-flexible";
 import { ANNOTATE_CDS_RATE_LIMIT, FLAG_RATE_LIMIT_PERFORMED, GLOBAL_RATE_LIMITER_PREFIX, RATE_LIMIT_HEADERS } from "./constants";
+import { KeyPart, MemoryRateLimitOptions, RateLimitOptions, RedisRateLimitOptions } from "./types";
 import { groupByKeyPrefix } from "./utils";
 
-export type KeyPart = "user_id" | "remote_ip" | "tenant";
-
-export interface RateLimitOptions extends IRateLimiterOptions {
-  impl?: "memory" | "redis";
-  keyParts?: Array<KeyPart>;
-}
-
-export interface MemoryRateLimitOptions extends RateLimitOptions {
-  impl: "memory";
-}
-
-export interface RedisRateLimitOptions extends RateLimitOptions {
-  impl: "redis";
-  /**
-   * redis client
-   */
-  storeClient: any;
-}
 
 export const DEFAULT_OPTIONS: RateLimitOptions = {
   impl: "memory",
@@ -70,11 +53,14 @@ const parseOptions = (service: any, evt: any, globalOptions: RateLimitOptions): 
     Object.assign(localOptions, serviceLevelOptions);
   }
 
-  let eventDef = undefined;
+  /**
+   * definition for action/function
+   */
+  let actionFunctionDef = undefined;
 
   // entity relevant
   if (evt?.entity !== undefined) {
-    // entity related events
+    // entity related events, CRUD
     const entityDef = cds.model.definitions[evt.entity];
     const entityLevelOptions = groupByKeyPrefix(entityDef, ANNOTATE_CDS_RATE_LIMIT);
     if (!isEmpty(entityLevelOptions)) {
@@ -87,17 +73,17 @@ const parseOptions = (service: any, evt: any, globalOptions: RateLimitOptions): 
 
     // bound action/function
     if (entityDef.actions !== undefined && evt.event in entityDef.actions) {
-      eventDef = entityDef.actions[evt.event];
+      actionFunctionDef = entityDef.actions[evt.event];
     }
   }
 
   // unbound action/function
   if (evt.entity === undefined && evt.event in service.operations()) {
-    eventDef = service.operations()[evt.event];
+    actionFunctionDef = service.operations()[evt.event];
   }
 
-  if (eventDef !== undefined) {
-    const eventLevelOptions = groupByKeyPrefix(eventDef, ANNOTATE_CDS_RATE_LIMIT);
+  if (actionFunctionDef !== undefined) {
+    const eventLevelOptions = groupByKeyPrefix(actionFunctionDef, ANNOTATE_CDS_RATE_LIMIT);
     if (!isEmpty(eventLevelOptions)) {
       if ("duration" in eventLevelOptions || "points" in eventLevelOptions) {
         // use entity key-prefix, which will be used to indicate the Rate Limiter
