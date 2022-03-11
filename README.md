@@ -2,6 +2,7 @@
 
 > apply `rate limit` pattern to CAP nodejs application
 
+[![npm](https://img.shields.io/npm/v/cds-rate-limit)](https://www.npmjs.com/package/cds-rate-limit)
 [![node-test](https://github.com/Soontao/cds-rate-limit/actions/workflows/nodejs.yml/badge.svg)](https://github.com/Soontao/cds-rate-limit/actions/workflows/nodejs.yml)
 [![codecov](https://codecov.io/gh/Soontao/cds-rate-limit/branch/main/graph/badge.svg?token=xzBkWloYNR)](https://codecov.io/gh/Soontao/cds-rate-limit)
 
@@ -110,5 +111,7 @@ applyRateLimit(cds, {
 
 - [ ] Documents for microservice
 - [ ] Performance
+
+## [CHANGELOG](./CHANGELOG.md)
 
 ## [LICENSE](./LICENSE)
