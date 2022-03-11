@@ -25,8 +25,10 @@ module.exports = cds.server
 using {cuid, managed} from '@sap/cds/common';
 @path : '/sample3'
 service Sample3Service {
+
+  // define rate limit for entity CRUD events and actions
   // accepts 1000 requests in 120 seconds
-  // other request will be rejected by HTTP 429 status
+  // other requests will be rejected by HTTP 429 status
   @cds.rate.limit : { 
     duration : 120,
     points   : 1000,
@@ -34,6 +36,11 @@ service Sample3Service {
   entity People : cuid, managed {
     Name : String(255);
     Age  : Integer;
+  }
+
+  // share global quota
+  entity Other: cuid, managed {
+    Name : String(255);
   }
 }
 ```
