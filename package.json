@@ -1,6 +1,6 @@
 {
   "name": "cds-rate-limit",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "lib/index.js",
   "description": "enabled rate limit for CAP nodejs runtime",
   "author": {
