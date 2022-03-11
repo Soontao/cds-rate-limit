@@ -2,10 +2,14 @@
   "name": "cds-rate-limit",
   "version": "0.0.2",
   "main": "lib/index.js",
-  "description": "enabled rate limit for CAP nodejs runtime",
+  "description": "enabled rate limit pattern for CAP nodejs runtime",
   "author": {
     "name": "Theo Sun",
     "email": "theo.sun@outlook.com"
+  },
+  "repository": {
+    "url": "https://github.com/Soontao/cds-rate-limit",
+    "type": "git"
   },
   "engines": {
     "node": ">=12",
