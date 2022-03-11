@@ -50,9 +50,9 @@ service Sample3Service {
 ## Options
 
 - `keyParts`: use to generated the key
-  - remote_ip
-  - user_id
-  - tenant
+  - `remote_ip` - req._.req.ip
+  - `user_id` - ctx.user.id
+  - `tenant` - ctx.tenant
 - `points`: quota for each key
 - `duration`: quota for each key in duration
 

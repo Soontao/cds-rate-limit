@@ -33,6 +33,7 @@ export const DEFAULT_OPTIONS: RateLimitOptions = {
 
 const createKeyExtractor = (keyParts: Array<KeyPart>) => (evt: any) => {
   const parts = [];
+
   if (keyParts.includes("tenant")) {
     parts.push(evt?.tenant ?? "unknown_tenant");
   }
@@ -188,8 +189,8 @@ export const applyRateLimit = (cds: any, defaultOptions?: MemoryRateLimitOptions
             }
 
             cds.context[FLAG_RATE_LIMIT_PERFORMED] = true;
-
             const options = parseOptions(srv, evt, globalOptions);
+            // TODO: if anonymous, use fallback limiter 
             const rateLimiter = limiters.getOrCreate(options.keyPrefix, () => provisionRateLimiter(options));
             const keyExtractor = createKeyExtractor(options.keyParts as []);
             const key = keyExtractor(evt);
