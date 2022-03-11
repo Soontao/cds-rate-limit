@@ -1,6 +1,6 @@
 import { LRUCacheProvider } from "@newdash/newdash/cacheProvider";
 import { isEmpty } from "@newdash/newdash/isEmpty";
-import { IRateLimiterOptions, RateLimiterAbstract, RateLimiterMemory, RateLimiterRes } from "rate-limiter-flexible";
+import { IRateLimiterOptions, RateLimiterAbstract, RateLimiterMemory, RateLimiterRedis, RateLimiterRes } from "rate-limiter-flexible";
 import { ANNOTATE_CDS_RATE_LIMIT, FLAG_RATE_LIMIT_PERFORMED, GLOBAL_RATE_LIMITER_PREFIX, RATE_LIMIT_HEADERS } from "./constants";
 import { groupByKeyPrefix } from "./utils";
 
@@ -9,6 +9,18 @@ export type KeyPart = "user_id" | "remote_ip" | "tenant";
 export interface RateLimitOptions extends IRateLimiterOptions {
   impl?: "memory" | "redis";
   keyParts?: Array<KeyPart>;
+}
+
+export interface MemoryRateLimitOptions extends RateLimitOptions {
+  impl: "memory";
+}
+
+export interface RedisRateLimitOptions extends RateLimitOptions {
+  impl: "redis";
+  /**
+   * redis client
+   */
+  storeClient: any;
 }
 
 export const DEFAULT_OPTIONS: RateLimitOptions = {
@@ -110,6 +122,8 @@ const formatEventKey = (service: any, evt: any): string => {
 
 const provisionRateLimiter = (options: RateLimitOptions): RateLimiterAbstract => {
   switch (options.impl) {
+    case "redis":
+      return new RateLimiterRedis(options as any);
     default:
       return new RateLimiterMemory(options);
   }
@@ -138,15 +152,15 @@ const attachHeaders = (evt: any, total: number, rateLimitRes: RateLimiterRes) =>
  * apply rate limitation for cds
  * 
  * @param cds 
- * @param globalOptions 
+ * @param defaultOptions 
  */
-export const applyRateLimit = (cds: any, globalOptions: RateLimitOptions = {}) => {
+export const applyRateLimit = (cds: any, defaultOptions?: MemoryRateLimitOptions | RedisRateLimitOptions) => {
   /**
    * key: service/event id
    */
   const limiters = new LRUCacheProvider(10240);
 
-  globalOptions = Object.assign({}, DEFAULT_OPTIONS, globalOptions ?? {});
+  const globalOptions = Object.assign({}, DEFAULT_OPTIONS, defaultOptions ?? {});
 
   cds.on("serving", (service: any) => {
 

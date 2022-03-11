@@ -28,6 +28,10 @@ jobs:
           git config --global core.eol lf
 
       - uses: actions/checkout@v1
+
+      - name: Setup redis
+        uses: shogo82148/actions-setup-redis@v1
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
@@ -46,7 +50,7 @@ jobs:
         env:
           CI: true
 
-      - run: npm i --no-save @sap/cds@5 express sqlite3
+      - run: npm i --no-save @sap/cds@5 express sqlite3 ioredis
 
       - run: npm run lint
       - run: npm run build --if-present
