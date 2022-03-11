@@ -61,5 +61,11 @@ service Sample3Service {
 - [ ] Custom key
 - [ ] Redis store
 - [ ] Dynamic quota for tenants
+- [ ] Sampling store to reduce remote store network consumption
+
+## ToDo
+
+- [ ] Documents for microservice
+- [ ] Performance
 
 ## [LICENSE](./LICENSE)
