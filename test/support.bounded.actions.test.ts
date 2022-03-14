@@ -1,17 +1,15 @@
 
 import cds from "@sap/cds";
 import { RATE_LIMIT_HEADERS } from "../src/constants";
+import { setupBasicAuth } from "./utils";
 
 describe("Support Bounded Action/Function Test Suite", () => {
 
   // @ts-ignore
   const { axios } = cds.test(".").in(__dirname, "./app")
 
-  axios.defaults.auth = {
-    username: "Theo Sun",
-    password: "dummy"
-  }
-  
+  setupBasicAuth(axios)
+
   it('should support rate limit in action/function level', async () => {
     let responses = await axios.post("/sample4/People", { Name: "Theo Sun" }, { validateStatus: () => true })
     expect(responses.status).toBe(201)

@@ -1,16 +1,14 @@
 
 import { sleep } from "@newdash/newdash";
 import cds from "@sap/cds";
+import { setupBasicAuth } from "./utils";
 
 describe("Rate Limit Exceed (Redis) Test Suite", () => {
 
   // @ts-ignore
   const { axios } = cds.test(".").in(__dirname, "./redis-app")
 
-  axios.defaults.auth = {
-    username: "Theo Sun",
-    password: "dummy"
-  }
+  setupBasicAuth(axios)
 
   it('should reject request after limit exceed', async () => {
 

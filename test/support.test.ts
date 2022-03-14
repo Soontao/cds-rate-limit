@@ -1,16 +1,14 @@
 
 import cds from "@sap/cds";
 import { RATE_LIMIT_HEADERS } from "../src/constants";
+import { setupBasicAuth } from "./utils";
 
 describe("Support Test Suite", () => {
 
   // @ts-ignore
   const { axios } = cds.test(".").in(__dirname, "./app")
 
-  axios.defaults.auth = {
-    username: "Theo Sun",
-    password: "dummy"
-  }
+  setupBasicAuth(axios)
   
   it('should support connect to service', async () => {
     const { data } = await axios.get("/sample/$metadata")
