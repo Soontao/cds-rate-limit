@@ -5,6 +5,8 @@ export const FLAG_RATE_LIMIT_PERFORMED = "__rate_limit_performed";
 
 export const GLOBAL_RATE_LIMITER_PREFIX = "global-rate-limiter";
 
+export const GLOBAL_ANONYMOUS_RATE_LIMITER_PREFIX = GLOBAL_RATE_LIMITER_PREFIX + "-anonymous";
+
 export const RATE_LIMIT_HEADERS = {
   "Retry-After": "Retry-After",
   "X-RateLimit-Limit": "X-RateLimit-Limit",

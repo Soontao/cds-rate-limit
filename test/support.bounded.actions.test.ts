@@ -5,8 +5,13 @@ import { RATE_LIMIT_HEADERS } from "../src/constants";
 describe("Support Bounded Action/Function Test Suite", () => {
 
   // @ts-ignore
-  const axios = cds.test(".").in(__dirname, "./app")
+  const { axios } = cds.test(".").in(__dirname, "./app")
 
+  axios.defaults.auth = {
+    username: "Theo Sun",
+    password: "dummy"
+  }
+  
   it('should support rate limit in action/function level', async () => {
     let responses = await axios.post("/sample4/People", { Name: "Theo Sun" }, { validateStatus: () => true })
     expect(responses.status).toBe(201)

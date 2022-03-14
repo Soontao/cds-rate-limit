@@ -5,7 +5,12 @@ import cds from "@sap/cds";
 describe("Rate Limit Exceed (Memory) Test Suite", () => {
 
   // @ts-ignore
-  const axios = cds.test(".").in(__dirname, "./app")
+  const { axios } = cds.test(".").in(__dirname, "./app")
+
+  axios.defaults.auth = {
+    username: "Theo Sun",
+    password: "dummy"
+  }
 
   it('should reject request after limit exceed', async () => {
 

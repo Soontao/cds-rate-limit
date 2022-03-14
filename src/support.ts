@@ -1,7 +1,11 @@
 import { LRUCacheProvider } from "@newdash/newdash/cacheProvider";
 import { isEmpty } from "@newdash/newdash/isEmpty";
 import { RateLimiterAbstract, RateLimiterMemory, RateLimiterRedis, RateLimiterRes } from "rate-limiter-flexible";
-import { ANNOTATE_CDS_RATE_LIMIT, FLAG_RATE_LIMIT_PERFORMED, GLOBAL_RATE_LIMITER_PREFIX, RATE_LIMIT_HEADERS } from "./constants";
+import {
+  ANNOTATE_CDS_RATE_LIMIT, FLAG_RATE_LIMIT_PERFORMED,
+  GLOBAL_ANONYMOUS_RATE_LIMITER_PREFIX,
+  GLOBAL_RATE_LIMITER_PREFIX, RATE_LIMIT_HEADERS
+} from "./constants";
 import { KeyPart, MemoryRateLimitOptions, RateLimitOptions, RedisRateLimitOptions } from "./types";
 import { groupByKeyPrefix } from "./utils";
 
@@ -12,6 +16,13 @@ export const DEFAULT_OPTIONS: RateLimitOptions = {
   keyPrefix: GLOBAL_RATE_LIMITER_PREFIX,
   duration: 60, // 60 seconds
   points: 200 * 60, // 200 requests per seconds
+  anonymous: {
+    // per seconds per remote ip allow 1000 requests
+    keyPrefix: GLOBAL_ANONYMOUS_RATE_LIMITER_PREFIX,
+    duration: 10,
+    points: 10 * 100, // 
+    keyParts: ["remote_ip"]
+  },
 };
 
 const createKeyExtractor = (keyParts: Array<KeyPart>) => (evt: any) => {
@@ -41,6 +52,11 @@ const createKeyExtractor = (keyParts: Array<KeyPart>) => (evt: any) => {
  */
 const parseOptions = (service: any, evt: any, globalOptions: RateLimitOptions): RateLimitOptions => {
   const cds = require("@sap/cds");
+
+  if (evt.user instanceof cds.User.Anonymous && globalOptions.anonymous !== false) {
+    return Object.assign(globalOptions, globalOptions.anonymous);
+  }
+
   const localOptions: RateLimitOptions = {};
 
   const serviceLevelOptions = groupByKeyPrefix(service.definition, ANNOTATE_CDS_RATE_LIMIT);

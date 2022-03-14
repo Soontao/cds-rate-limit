@@ -7,7 +7,7 @@ using {
 } from '@sap/cds/common';
 
 // global level
-
+@requires       : 'authenticated-user'
 @path : '/sample'
 service SampleService {
 

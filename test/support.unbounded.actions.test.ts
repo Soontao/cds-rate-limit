@@ -5,7 +5,12 @@ import { RATE_LIMIT_HEADERS } from "../src/constants";
 describe("Support Unbound Action/Function Test Suite", () => {
 
   // @ts-ignore
-  const axios = cds.test(".").in(__dirname, "./app")
+  const { axios } = cds.test(".").in(__dirname, "./app")
+
+  axios.defaults.auth = {
+    username: "Theo Sun",
+    password: "dummy"
+  }
 
   it('should support rate limit in unbound action/function level', async () => {
     const { data: metadata } = await axios.get("/sample4/$metadata")

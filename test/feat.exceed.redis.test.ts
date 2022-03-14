@@ -5,7 +5,12 @@ import cds from "@sap/cds";
 describe("Rate Limit Exceed (Redis) Test Suite", () => {
 
   // @ts-ignore
-  const axios = cds.test(".").in(__dirname, "./redis-app")
+  const { axios } = cds.test(".").in(__dirname, "./redis-app")
+
+  axios.defaults.auth = {
+    username: "Theo Sun",
+    password: "dummy"
+  }
 
   it('should reject request after limit exceed', async () => {
 

@@ -5,7 +5,7 @@ using {
   managed
 } from '@sap/cds/common';
 
-
+@requires       : 'authenticated-user'
 @impl : './sample4.js'
 @path : '/sample4'
 service Sample4Service {
