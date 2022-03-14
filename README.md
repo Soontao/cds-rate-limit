@@ -115,6 +115,7 @@ applyRateLimit(cds, {
 - [x] Event Rate Limit
   - [x] Inner event ignore
 - [ ] Custom key
+- [ ] Global Env Configuration
 - [x] Redis store
 - [ ] Dynamic quota for tenants
 - [ ] Sampling store to reduce remote store network consumption
