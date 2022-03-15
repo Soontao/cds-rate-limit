@@ -10,3 +10,8 @@ export const setupBasicAuth = (axios: any) => {
   }
   return axios
 }
+
+export const setupIgnoreStatus = (axios: any) => {
+  axios.defaults.validateStatus = () => true
+  return axios
+}

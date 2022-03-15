@@ -1,0 +1,36 @@
+
+import cds from "@sap/cds";
+import { RATE_LIMIT_HEADERS } from "../src/constants";
+import { setupIgnoreStatus } from "./utils";
+
+describe("Support Anonymous User Test Suite", () => {
+
+  // @ts-ignore
+  const { axios } = cds.test(".").in(__dirname, "./app")
+
+  setupIgnoreStatus(axios)
+
+  it('should support RateLimit headers', async () => {
+    let responses = await axios.get("/sample/People")
+    expect(responses.status).toBe(401)
+    expect(responses.headers[RATE_LIMIT_HEADERS["Retry-After"].toLowerCase()]).toBe("36")
+    expect(responses.headers[RATE_LIMIT_HEADERS["X-RateLimit-Limit"].toLowerCase()]).toBe("1000")
+    expect(responses.headers[RATE_LIMIT_HEADERS["X-RateLimit-Remaining"].toLowerCase()]).toBe("999")
+    expect(responses.headers[RATE_LIMIT_HEADERS["X-RateLimit-Reset"].toLowerCase()]).not.toBeUndefined()
+
+    // for another ip
+    responses = await axios.get("/sample/People", {
+      headers: {
+        'X-Forwarded-For': '1.1.1.1'
+      }
+    })
+
+    expect(responses.status).toBe(401)
+    expect(responses.headers[RATE_LIMIT_HEADERS["Retry-After"].toLowerCase()]).toBe("36")
+    expect(responses.headers[RATE_LIMIT_HEADERS["X-RateLimit-Limit"].toLowerCase()]).toBe("1000")
+    expect(responses.headers[RATE_LIMIT_HEADERS["X-RateLimit-Remaining"].toLowerCase()]).toBe("999")
+    expect(responses.headers[RATE_LIMIT_HEADERS["X-RateLimit-Reset"].toLowerCase()]).not.toBeUndefined()
+
+  });
+
+});

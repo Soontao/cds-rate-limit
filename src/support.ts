@@ -11,17 +11,18 @@ import { groupByKeyPrefix } from "./utils";
 
 
 export const DEFAULT_OPTIONS: RateLimitOptions = {
-  impl: "memory",
-  keyParts: ["tenant"],
-  keyPrefix: GLOBAL_RATE_LIMITER_PREFIX,
+  impl: "memory", // use in-memory
+  keyParts: ["tenant"], // generate key from tenant
+  keyPrefix: GLOBAL_RATE_LIMITER_PREFIX, // default prefix
   duration: 60, // 60 seconds
   points: 200 * 60, // 200 requests per seconds
+
+  // for anonymous requests
   anonymous: {
     // per seconds per remote ip allow 1000 requests
     keyPrefix: GLOBAL_ANONYMOUS_RATE_LIMITER_PREFIX,
     duration: 10,
-    points: 10 * 100, // 
-    keyParts: ["remote_ip"]
+    points: 10 * 1000,
   },
 };
 
@@ -52,10 +53,6 @@ const createKeyExtractor = (keyParts: Array<KeyPart>) => (evt: any) => {
  */
 const parseOptions = (service: any, evt: any, globalOptions: RateLimitOptions): RateLimitOptions => {
   const cds = require("@sap/cds");
-
-  if (evt.user instanceof cds.User.Anonymous && globalOptions.anonymous !== false) {
-    return Object.assign(globalOptions, globalOptions.anonymous);
-  }
 
   const localOptions: RateLimitOptions = {};
 
@@ -136,12 +133,11 @@ const provisionRateLimiter = (options: RateLimitOptions): RateLimiterAbstract =>
 /**
  * attach headers to evt
  * 
- * @param evt 
+ * @param response express response
  * @param total 
  * @param rateLimitRes 
  */
-const attachHeaders = (evt: any, total: number, rateLimitRes: RateLimiterRes) => {
-  const response = evt?._?.req?.res;
+const attachHeaders = (response: any, total: number, rateLimitRes: RateLimiterRes) => {
   if (response !== undefined) {
     response?.set?.({
       [RATE_LIMIT_HEADERS["Retry-After"]]: Math.floor(rateLimitRes.msBeforeNext / 1000),
@@ -159,14 +155,14 @@ const attachHeaders = (evt: any, total: number, rateLimitRes: RateLimiterRes) =>
  * @param defaultOptions 
  */
 export const applyRateLimit = (cds: any, defaultOptions?: MemoryRateLimitOptions | RedisRateLimitOptions) => {
-  /**
-   * key: service/event id
-   */
   const limiters = new LRUCacheProvider(10240);
-
   const globalOptions = Object.assign({}, DEFAULT_OPTIONS, defaultOptions ?? {});
+  cds.on("bootstrap", createBootStrapListener(cds, globalOptions, limiters))
+  cds.on("serving", createServiceListener(cds, globalOptions, limiters));
+};
 
-  cds.on("serving", (service: any) => {
+function createServiceListener(cds: any, globalOptions: RateLimitOptions, limiters: LRUCacheProvider<string, RateLimiterAbstract>): any {
+  return (service: any) => {
 
     if (service instanceof cds.ApplicationService) { // only application services
 
@@ -193,19 +189,18 @@ export const applyRateLimit = (cds: any, defaultOptions?: MemoryRateLimitOptions
 
             cds.context[FLAG_RATE_LIMIT_PERFORMED] = true;
             const options = parseOptions(srv, evt, globalOptions);
-            // TODO: if anonymous, use fallback limiter 
-            const rateLimiter = limiters.getOrCreate(options.keyPrefix, () => provisionRateLimiter(options));
+            const rateLimiter = limiters.getOrCreate(options.keyPrefix as string, () => provisionRateLimiter(options));
             const keyExtractor = createKeyExtractor(options.keyParts as []);
             const key = keyExtractor(evt);
 
             try {
               const response = await rateLimiter.consume(key);
               logger.debug("rate limit consume successful:", key, response);
-              attachHeaders(evt, options.points as number, response);
+              attachHeaders(evt?._?.req?.res, options.points as number, response);
               return;
             } catch (response) {
               logger.error("rate limit consume failed:", key, response);
-              attachHeaders(evt, options.points as number, response);
+              attachHeaders(evt?._?.req?.res, options.points as number, response);
               return evt.reject(
                 429,
                 `Rate limit exceed, please retry after ${Math.floor(response.msBeforeNext / 1000)} seconds`
@@ -219,6 +214,39 @@ export const applyRateLimit = (cds: any, defaultOptions?: MemoryRateLimitOptions
 
 
     }
-  });
+  };
+}
 
-};
+function createBootStrapListener(cds: any, globalOptions: RateLimitOptions, limiters: LRUCacheProvider<string, RateLimiterAbstract>): any {
+  return (app: any) => {
+    if (globalOptions.anonymous !== false) {
+      const logger = cds.log("AnonymousRateLimiter");
+      app.use(async (req: any) => {
+        // without authorization header
+        if (req.get("authorization") === undefined) {
+          const options = Object.assign({}, globalOptions, globalOptions.anonymous);
+          const rateLimiter = limiters.getOrCreate(options.keyPrefix as string, () => provisionRateLimiter(options));
+          try {
+            const response = await rateLimiter.consume(req.ip);
+            logger.debug("rate limit consume successful:", req.ip, response);
+            attachHeaders(req.res, options.points as number, response);
+            return req.next();
+          } catch (response) {
+            logger.error("rate limit consume failed:", req.ip, response);
+            attachHeaders(req.res, options.points as number, response);
+            return req.res.status(429).json({
+              error: {
+                code: "429",
+                message: `Rate limit exceed, please retry after ${Math.floor(response.msBeforeNext / 1000)} seconds`
+              }
+            });
+          }
+        }
+
+        return req.next();
+
+      });
+    }
+  };
+}
+

@@ -2,7 +2,7 @@ import type { IRateLimiterOptions } from "rate-limiter-flexible";
 
 export type KeyPart = "user_id" | "remote_ip" | "tenant";
 
-export type AnonymousPolicy = false | Pick<RateLimitOptions, "duration" | "points" | "keyParts" | "keyPrefix">
+export type AnonymousPolicy = false | Pick<RateLimitOptions, "duration" | "points" | "keyPrefix">
 
 export interface RateLimitOptions extends IRateLimiterOptions {
   impl?: "memory" | "redis";

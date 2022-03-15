@@ -73,9 +73,19 @@ service Sample3Service {
 
 ```js
 {
+  impl: "memory", // use in-memory
   keyParts: ["tenant"], // generate key from tenant
+  keyPrefix: GLOBAL_RATE_LIMITER_PREFIX, // default prefix
   duration: 60, // 60 seconds
-  points: 200 * 60, // 12000 requests per minutes per tenant
+  points: 200 * 60, // 200 requests per seconds
+
+  // for anonymous requests (without authorization header)
+  anonymous: {
+    // per seconds per remote ip allow 1000 requests
+    keyPrefix: GLOBAL_ANONYMOUS_RATE_LIMITER_PREFIX,
+    duration: 10,
+    points: 10 * 100,
+  },
 }
 ```
 
@@ -114,6 +124,7 @@ applyRateLimit(cds, {
 - [x] Global Rate Limit
 - [x] Event Rate Limit
   - [x] Inner event ignore
+- [x] Anonymous Request Rate Limit 
 - [ ] Custom key
 - [ ] Global Env Configuration
 - [x] Redis store
