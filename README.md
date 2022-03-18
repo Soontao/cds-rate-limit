@@ -135,12 +135,12 @@ applyRateLimit(cds, {
 - [x] Custom key
 - [ ] Global Env Configuration
 - [x] Redis store
-- [ ] Dynamic quota for tenants
+- [ ] Dynamic quota configuration
 - [ ] Sampling store to reduce remote store network consumption
 
 ## ToDo
 
-- [ ] How to process anonymous requests
+- [x] How to process anonymous requests
 - [ ] Documents for microservice
 - [ ] Performance
 
