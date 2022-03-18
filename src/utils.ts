@@ -1,3 +1,4 @@
+import { cwd } from "process";
 
 export const groupByKeyPrefix = (obj: any, key: string) => {
   if (obj === undefined || obj === null) {
@@ -12,3 +13,17 @@ export const groupByKeyPrefix = (obj: any, key: string) => {
     }, {});
 
 };
+
+/**
+ * get the rate limiter key from event 
+ * 
+ * @param service 
+ * @param evt 
+ * @returns 
+ */
+export const formatEventKey = (service: any, evt: any): string => {
+  return `${service.name}/${evt?.entity ?? "unbound"}/${evt}`;;
+};
+
+
+export const cwdRequire = (id: string) => require(require.resolve(id, { paths: [cwd()] }));
