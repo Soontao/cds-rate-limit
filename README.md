@@ -49,6 +49,13 @@ service Sample3Service {
 }
 ```
 
+## Headers
+
+* `Retry-After `- reset after seconds later
+* `X-RateLimit-Reset` - reset timestamp (unix timestamp)
+* `X-RateLimit-Limit` - total quota for each window
+* `X-RateLimit-Remaining` - remaining quota for current window
+
 ## RateLimiter Hierarchy
 
 > the `RateLimiter` configuration will apply restriction by order, if you do not annotate `@cds.rate.limit` on entity/action/function level, it will share the quota of the global `RateLimiter`
