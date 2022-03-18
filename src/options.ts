@@ -12,7 +12,9 @@ const optionsCache = new Map<string, RateLimitOptions>();
  * @param globalOptions 
  * @returns 
  */
-export const parseOptions = (service: any, evt: any, globalOptions: RateLimitOptions): RateLimitOptions => {
+export const parseOptions = async (service: any, evt: any, globalOptions: RateLimitOptions): Promise<RateLimitOptions> => {
+
+  // TODO: provide options from remote config (global/service/entity/event)
 
   const key = formatEventKey(service, evt);
   if (!optionsCache.has(key)) {

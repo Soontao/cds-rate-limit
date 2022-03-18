@@ -66,7 +66,7 @@ function createServiceListener(cds: any, globalOptions: RateLimitOptions): any {
     if (service instanceof cds.ApplicationService) { // only application services
 
       const logger = cds.log(service?.name);
-      
+
       const createKeyExtractor = keyExtractorCreatorBuilder(globalOptions.keyExtractors);
 
       service.prepend("*", (srv: any) => {
@@ -89,7 +89,7 @@ function createServiceListener(cds: any, globalOptions: RateLimitOptions): any {
             }
 
             cds.context[FLAG_RATE_LIMIT_PERFORMED] = true;
-            const options = parseOptions(srv, evt, globalOptions);
+            const options = await parseOptions(srv, evt, globalOptions);
             const rateLimiter = provisionRateLimiter(options);
             const keyExtractor = createKeyExtractor(options.keyParts as []);
             const key = keyExtractor(evt);
@@ -125,6 +125,7 @@ function createBootStrapListener(cds: any, globalOptions: RateLimitOptions): any
       app.use(async (req: any) => {
         // without authorization header
         if (req.get("authorization") === undefined) {
+          // TODO: provide `anonymous` options from remote
           const options = Object.assign({}, globalOptions, globalOptions.anonymous);
           const rateLimiter = provisionRateLimiter(options);
           try {
