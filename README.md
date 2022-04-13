@@ -51,7 +51,7 @@ service Sample3Service {
 
 ## Headers
 
-* `Retry-After `- reset after seconds later
+* `Retry-After` - reset after seconds later
 * `X-RateLimit-Reset` - reset timestamp (unix timestamp)
 * `X-RateLimit-Limit` - total quota for each window
 * `X-RateLimit-Remaining` - remaining quota for current window

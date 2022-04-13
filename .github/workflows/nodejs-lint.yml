@@ -1,4 +1,4 @@
-name: node-test
+name: node-lint
 
 on:
   push:
@@ -7,18 +7,16 @@ on:
   pull_request:
     branches:
       - "*"
-  schedule:
-    - cron: "23 4 * * *"
 
 jobs:
-  build:
+  lint:
     runs-on: ${{ matrix.os }}
 
     timeout-minutes: 30
 
     strategy:
       matrix:
-        node-version: [12.x, 14.x, 16.x]
+        node-version: [16.x]
         os: [ubuntu-latest]
 
     steps:
@@ -52,10 +50,4 @@ jobs:
 
       - run: npm i --no-save @sap/cds@5 express sqlite3 ioredis
 
-      - run: npm run build --if-present
-
-      - name: test & coverage
-        run: npm run coverage
-
-      - name: upload coverage
-        uses: codecov/codecov-action@v1
+      - run: npm run lint
