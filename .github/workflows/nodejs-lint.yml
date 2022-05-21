@@ -53,10 +53,8 @@ jobs:
           path: ~/.npm
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
 
-      - name: npm install
-        run: npm install
-        env:
-          CI: true
+      - name: npm ci
+        run: npm ci
 
       - run: npm i --no-save @sap/cds@5 express sqlite3 ioredis
 

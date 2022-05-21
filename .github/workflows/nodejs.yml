@@ -55,8 +55,8 @@ jobs:
           path: ~/.npm
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
 
-      - name: npm install
-        run: npm install
+      - name: npm ci
+        run: npm ci
         env:
           CI: true
 
