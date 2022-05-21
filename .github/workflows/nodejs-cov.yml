@@ -1,4 +1,4 @@
-name: node-test
+name: node-coverage
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
     branches:
       - "*"
   schedule:
-    - cron: "23 4 * * *"
+    - cron: "33 14 * * *"
 
 jobs:
   build:
@@ -18,7 +18,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x, 18.x]
+        node-version: [18.x]
         os: [ubuntu-latest]
 
     # Service containers to run with `container-job`
@@ -55,14 +55,15 @@ jobs:
           path: ~/.npm
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
 
-      - name: npm install
-        run: npm install
+      - name: npm ci
+        run: npm ci
         env:
           CI: true
 
       - run: npm i --no-save @sap/cds@5 express sqlite3 ioredis
 
-      - run: npm run build --if-present
+      - name: test & coverage
+        run: npm run coverage
 
-      - name: test
-        run: npm run test
+      - name: upload coverage
+        uses: codecov/codecov-action@v1
