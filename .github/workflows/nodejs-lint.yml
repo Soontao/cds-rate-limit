@@ -56,6 +56,5 @@ jobs:
       - name: npm ci
         run: npm ci
 
-      - run: npm i --no-save @sap/cds@5 express sqlite3 ioredis
 
       - run: npm run lint

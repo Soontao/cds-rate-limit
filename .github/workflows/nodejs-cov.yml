@@ -58,7 +58,6 @@ jobs:
       - name: npm ci
         run: npm ci
 
-      - run: npm i --no-save @sap/cds@5 express sqlite3 ioredis
 
       - name: test & coverage
         run: npm run coverage

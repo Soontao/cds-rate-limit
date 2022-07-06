@@ -60,8 +60,6 @@ jobs:
         env:
           CI: true
 
-      - run: npm i --no-save @sap/cds@5 express sqlite3 ioredis
-
       - run: npm run build --if-present
 
       - name: test

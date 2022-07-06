@@ -11,4 +11,3 @@ jest.config.js
 .prettierignore
 .prettierrc.json
 .whitesource
-src
