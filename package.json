@@ -2,7 +2,7 @@
   "name": "cds-rate-limit",
   "version": "0.0.4",
   "main": "lib/index.js",
-  "description": "enabled rate limit pattern for CAP nodejs runtime",
+  "description": "enabled rate limit pattern for CAP NodeJS Runtime",
   "author": {
     "name": "Theo Sun",
     "email": "theo.sun@outlook.com"
@@ -34,7 +34,6 @@
     "@typescript-eslint/parser": "^5.25.0",
     "eslint": "^8.16.0",
     "jest": "^28",
-    "rimraf": "^3.0.2",
     "ts-jest": "^28",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.4"
@@ -43,6 +42,9 @@
     "@newdash/newdash": "^5.21.2",
     "cds-internal-tool": "^1",
     "rate-limiter-flexible": "^2.3.7"
+  },
+  "optionalDependencies": {
+    "fsevents": "*"
   },
   "keywords": [
     "CAP",
