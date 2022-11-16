@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.5](https://github.com/Soontao/cds-rate-limit/compare/v0.0.4...v0.0.5) (2022-11-16)
+
+
+### Features
+
+* custom key extractor ([84c36b3](https://github.com/Soontao/cds-rate-limit/commit/84c36b3157daebab77509e280efcf3d3e68ecc7e))
+* support cds@6 ([5c2095c](https://github.com/Soontao/cds-rate-limit/commit/5c2095c6e91a8def6b4c9e5bae6acc6f75dc7f13))
+
+
+### Bug Fixes
+
+* ci lint ([c9b63cf](https://github.com/Soontao/cds-rate-limit/commit/c9b63cfa6aedddac2c0c827f02ee830d4ea0f400))
+
 ### [0.0.4](https://github.com/Soontao/cds-rate-limit/compare/v0.0.3...v0.0.4) (2022-03-15)
 
 ### [0.0.3](https://github.com/Soontao/cds-rate-limit/compare/v0.0.2...v0.0.3) (2022-03-11)
