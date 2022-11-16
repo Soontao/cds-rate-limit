@@ -142,6 +142,8 @@ service Sample3Service {
 }
 ```
 
+- for redis connection options, please check [ioredis document](https://www.npmjs.com/package/ioredis) or [RedisOptions type](https://github.com/luin/ioredis/blob/6f1ab9f/lib/redis/RedisOptions.ts#L188)
+
 ## Features
 
 - [x] Global Rate Limit
