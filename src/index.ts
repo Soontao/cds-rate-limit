@@ -1,2 +1,4 @@
+import { cwdRequireCDS } from "cds-internal-tool";
+import { applyRateLimit } from "./support";
 
-export { applyRateLimit } from "./support";
+applyRateLimit(cwdRequireCDS());

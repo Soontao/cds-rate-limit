@@ -12,15 +12,14 @@
 
 ## Get Started
 
-`server.js`
+`package.json`
 
-```js
-const cds = require('@sap/cds')
-const { applyRateLimit } = require("cds-rate-limit")
-
-applyRateLimit(cds) // with default global options
-
-module.exports = cds.server
+```json
+{
+  "cds": {
+    "plugins": ["cds-rate-limit"]
+  }
+}
 ```
 
 `cds definition`
@@ -33,7 +32,7 @@ service Sample3Service {
   // define rate limit for entity CRUD events and actions
   // accepts 1000 requests in 120 seconds
   // other requests will be rejected by HTTP 429 status
-  @cds.rate.limit : { 
+  @cds.rate.limit : {
     duration : 120,
     points   : 1000,
   }
@@ -51,10 +50,10 @@ service Sample3Service {
 
 ## Headers
 
-* `Retry-After` - reset after seconds later
-* `X-RateLimit-Reset` - reset timestamp (unix timestamp)
-* `X-RateLimit-Limit` - total quota for each window
-* `X-RateLimit-Remaining` - remaining quota for current window
+- `Retry-After` - reset after seconds later
+- `X-RateLimit-Reset` - reset timestamp (unix timestamp)
+- `X-RateLimit-Limit` - total quota for each window
+- `X-RateLimit-Remaining` - remaining quota for current window
 
 ## RateLimiter Hierarchy
 
@@ -68,7 +67,7 @@ service Sample3Service {
 ## Options
 
 - `keyParts`: use to generated the key
-  - `remote_ip` - req._.req.ip - please ref [express document](http://expressjs.com/en/guide/behind-proxies.html) to setup `trust proxy`
+  - `remote_ip` - req.\_.req.ip - please ref [express document](http://expressjs.com/en/guide/behind-proxies.html) to setup `trust proxy`
   - `user_id` - ctx.user.id
   - `tenant` - ctx.tenant
 - `points`: quota for each key (user, ip, tenant or combined)
@@ -98,32 +97,49 @@ service Sample3Service {
 
 ### Example - Memory
 
-```js
-// configuration global default configuration
-// each user could call API 6000 times in 1 minute duration
-applyRateLimit(cds, { 
-  impl: "memory", 
-  duration: 60, 
-  points: 6000, 
-  keyParts: ['user_id'] 
-})
+> configuration global default configuration, each user could call API 6000 times in 1 minute duration
+
+```json
+{
+  "cds": {
+    "plugins": ["cds-rate-limit"],
+    "config": {
+      "rateLimit": {
+        "impl": "memory",
+        "duration": 60,
+        "points": 6000,
+        "keyParts": ["user_id"]
+      }
+    }
+  }
+}
 ```
 
 ### Example - Redis
 
-```js
-const Redis = require("ioredis")
-// freedom to setup your redis client with host/port/db
-const storeClient = new Redis({ enableOfflineQueue: false });
-// configuration global default configuration with redis
-// each user in each tenant could use the API 300 times in 5 seconds duration
-applyRateLimit(cds, { 
-  impl: "redis", 
-  storeClient, 
-  duration: 5, 
-  points: 300, 
-  keyParts: ['tenant', 'user_id'] 
-})
+
+> each user in each tenant could use the API 300 times in 5 seconds duration
+
+
+```json
+{
+  "cds": {
+    "plugins": [
+      "cds-rate-limit"
+    ],
+    "config": {
+      "rateLimit": {
+        "impl": "redis",
+        "duration": 5,
+        "points": 300,
+        "keyParts": ["tenant", "user_id"],
+        "redisOptions": {
+          "enableOfflineQueue": false
+        }
+      }
+    }
+  }
+}
 ```
 
 ## Features
@@ -131,7 +147,7 @@ applyRateLimit(cds, {
 - [x] Global Rate Limit
 - [x] Event Rate Limit
   - [x] Inner event ignore
-- [x] Anonymous Request Rate Limit 
+- [x] Anonymous Request Rate Limit
 - [x] Custom key
 - [ ] Global Env Configuration
 - [x] Redis store

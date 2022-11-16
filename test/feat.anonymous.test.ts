@@ -1,14 +1,10 @@
 
-import cds from "@sap/cds";
+import { setupTest } from "cds-internal-tool";
 import { RATE_LIMIT_HEADERS } from "../src/constants";
-import { setupIgnoreStatus } from "./utils";
 
 describe("Support Anonymous User Test Suite", () => {
 
-  // @ts-ignore
-  const { axios } = cds.test(".").in(__dirname, "./app")
-
-  setupIgnoreStatus(axios)
+  const axios = setupTest(__dirname, "./app")
 
   it('should support RateLimit headers', async () => {
     let responses = await axios.get("/sample/People")

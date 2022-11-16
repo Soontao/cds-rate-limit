@@ -1,3 +1,4 @@
+import { CDS } from "cds-internal-tool";
 import { RateLimiterRes } from "rate-limiter-flexible";
 import {
   FLAG_RATE_LIMIT_PERFORMED,
@@ -10,14 +11,12 @@ import { parseOptions } from "./options";
 import { MemoryRateLimitOptions, RateLimitOptions, RedisRateLimitOptions } from "./types";
 import { formatEventKey } from "./utils";
 
-
 export const DEFAULT_OPTIONS: RateLimitOptions = {
   impl: "memory", // use in-memory
   keyParts: ["tenant"], // generate key from tenant
   keyPrefix: GLOBAL_RATE_LIMITER_PREFIX, // default prefix
   duration: 60, // 60 seconds
   points: 200 * 60, // 200 requests per seconds
-
   // for anonymous requests
   anonymous: {
     // per seconds per remote ip allow 1000 requests
@@ -26,8 +25,6 @@ export const DEFAULT_OPTIONS: RateLimitOptions = {
     points: 10 * 1000,
   },
 };
-
-
 
 
 /**
@@ -54,9 +51,13 @@ const attachHeaders = (response: any, total: number, rateLimitRes: RateLimiterRe
  * @param cds 
  * @param defaultOptions 
  */
-export const applyRateLimit = (cds: any, defaultOptions?: MemoryRateLimitOptions | RedisRateLimitOptions) => {
-  const globalOptions = Object.assign({}, DEFAULT_OPTIONS, defaultOptions ?? {});
-  cds.on("bootstrap", createBootStrapListener(cds, globalOptions));
+export const applyRateLimit = (cds: CDS) => {
+  const globalOptions: MemoryRateLimitOptions | RedisRateLimitOptions = Object.assign({}, DEFAULT_OPTIONS, cds.env.config?.rateLimit ?? {});
+  if (globalOptions.impl === "redis") {
+    const Redis = require("ioredis");
+    globalOptions.storeClient = new Redis(globalOptions.redisOptions);
+  }
+  cds.once("bootstrap", createBootStrapListener(cds, globalOptions));
   cds.on("serving", createServiceListener(cds, globalOptions));
 };
 

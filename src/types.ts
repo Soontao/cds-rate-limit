@@ -28,4 +28,8 @@ export interface RedisRateLimitOptions extends RateLimitOptions {
    * redis client
    */
   storeClient: any;
+  /**
+   * redis options
+   */
+  redisOptions: any;
 }

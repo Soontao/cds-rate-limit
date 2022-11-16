@@ -1,0 +1,15 @@
+{
+  "cds": {
+    "plugins": [
+      "../../src"
+    ],
+    "config": {
+      "rateLimit": {
+        "impl": "redis",
+        "redisOptions": {
+          "enableOfflineQueue": false
+        }
+      }
+    }
+  }
+}
