@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@newdash/newdash": "5.21.4",
-    "cds-internal-tool": "1.6.5",
+    "cds-internal-tool": "1.6.12",
     "rate-limiter-flexible": "2.4.1"
   },
   "optionalDependencies": {
