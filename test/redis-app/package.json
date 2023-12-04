@@ -1,8 +1,5 @@
 {
   "cds": {
-    "plugins": [
-      "../../src"
-    ],
     "config": {
       "rateLimit": {
         "impl": "redis",
@@ -11,5 +8,8 @@
         }
       }
     }
+  },
+  "devDependencies": {
+    "cds-rate-limit": "../../.."
   }
 }

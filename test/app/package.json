@@ -1,16 +1,16 @@
 {
   "cds": {
-    "plugins": [
-      "../../src"
-    ],
     "config": {
       "rateLimit": {
         "impl": "memory",
         "anonymous": {
-          "points": 1000,
-          "duration": 36
+          "points": 100,
+          "duration": 60
         }
       }
     }
+  },
+  "devDependencies": {
+    "cds-rate-limit": "../../.."
   }
 }

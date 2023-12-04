@@ -16,9 +16,10 @@ module.exports = {
   ],
   testEnvironment: "node",
   testRegex: "/test/.*\\.test\\.ts$",
+  setupFiles: ["./jest.setup.js"],
   moduleFileExtensions: [
     "ts",
     "js",
     "json"
-  ]
+  ],
 };

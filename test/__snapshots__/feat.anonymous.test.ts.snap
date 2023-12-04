@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Support Anonymous User Test Suite should support RateLimit headers 1`] = `"60"`;
+
+exports[`Support Anonymous User Test Suite should support RateLimit headers 2`] = `"100"`;
+
+exports[`Support Anonymous User Test Suite should support RateLimit headers 3`] = `"99"`;
+
+exports[`Support Anonymous User Test Suite should support RateLimit headers 4`] = `"60"`;
+
+exports[`Support Anonymous User Test Suite should support RateLimit headers 5`] = `"100"`;
+
+exports[`Support Anonymous User Test Suite should support RateLimit headers 6`] = `"99"`;
