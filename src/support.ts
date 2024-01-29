@@ -70,7 +70,7 @@ function createServiceListener(cds: any, globalOptions: RateLimitOptions): any {
 
       const createKeyExtractor = keyExtractorCreatorBuilder(globalOptions.keyExtractors);
 
-      service.prepend("*", (srv: any) => {
+      service.prepend((srv: any) => {
 
         srv.before("*", async (evt: any) => {
 

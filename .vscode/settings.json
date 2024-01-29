@@ -3,8 +3,8 @@
   "editor.tabSize": 2,
   "editor.formatOnSave": false,
   "editor.codeActionsOnSave": {
-    "source.fixAll": true,
-    "source.organizeImports": true
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit"
   },
   "[typescript]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
