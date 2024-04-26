@@ -39,7 +39,7 @@
     "typescript": "5.4.5"
   },
   "dependencies": {
-    "@newdash/newdash": "5.22.0",
+    "@newdash/newdash": "5.22.1",
     "cds-internal-tool": "1.7.9",
     "rate-limiter-flexible": "5.0.0"
   },
