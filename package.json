@@ -41,7 +41,7 @@
   "dependencies": {
     "@newdash/newdash": "5.23.1",
     "cds-internal-tool": "1.7.9",
-    "rate-limiter-flexible": "7.3.2"
+    "rate-limiter-flexible": "7.4.0"
   },
   "optionalDependencies": {
     "fsevents": "^2.3.3"
